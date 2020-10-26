@@ -17,41 +17,47 @@
                 return base.Equals(inputObject);
             }
 
+            public override int GetHashCode()
+            {
+                int hashCode = -837395861;
+                hashCode = hashCode * -1521134295 + Real.GetHashCode();
+                hashCode = hashCode * -1521134295 + Imaginary.GetHashCode();
+                return hashCode;
+            }
+
             public static readonly ComplexNumber Zero = new ComplexNumber()
             {
                 Real = 0,
                 Imaginary = 0
             };
 
-            public ComplexNumber Multiply(ComplexNumber inputNumber)
+            public ComplexNumber Multiply(ComplexNumber multiplier)
             {
-                // Steps:
-                // aRe*bRe + aRe*bIm*i + aIm*bRe*i + aIm*bIm*i*i
-                ComplexNumber thisInstance = this;
+                ComplexNumber currentInstance = this;
                 return new ComplexNumber()
                 {
-                    Real = thisInstance.Real * inputNumber.Real - thisInstance.Imaginary * inputNumber.Imaginary,
-                    Imaginary = thisInstance.Real * inputNumber.Imaginary + thisInstance.Imaginary * inputNumber.Real
+                    Real = currentInstance.Real * multiplier.Real - currentInstance.Imaginary * multiplier.Imaginary,
+                    Imaginary = currentInstance.Real * multiplier.Imaginary + currentInstance.Imaginary * multiplier.Real
                 };
             }
 
-            public ComplexNumber Add(ComplexNumber InputNumber)
+            public ComplexNumber Add(ComplexNumber adder)
             {
-                ComplexNumber thisInstance = this;
+                ComplexNumber currentInstance = this;
                 return new ComplexNumber()
                 {
-                    Real = thisInstance.Real + InputNumber.Real,
-                    Imaginary = thisInstance.Imaginary + InputNumber.Imaginary
+                    Real = currentInstance.Real + adder.Real,
+                    Imaginary = currentInstance.Imaginary + adder.Imaginary
                 };
             }
 
-            public ComplexNumber Subtract(ComplexNumber inputNumber)
+            public ComplexNumber Subtract(ComplexNumber reducer)
             {
-                ComplexNumber thisInstance = this;
+                ComplexNumber currentInstance = this;
                 return new ComplexNumber()
                 {
-                    Real = thisInstance.Real - inputNumber.Real,
-                    Imaginary = thisInstance.Imaginary - inputNumber.Imaginary
+                    Real = currentInstance.Real - reducer.Real,
+                    Imaginary = currentInstance.Imaginary - reducer.Imaginary
                 };
             }
 
@@ -60,13 +66,13 @@
                 return $"({Real} + {Imaginary}i)";
             }
 
-            internal ComplexNumber Divide(ComplexNumber inputNumber)
+            public ComplexNumber Divide(ComplexNumber inputNumber)
             {
-                // Steps:
-                // (aRe + aIm*i) / (bRe + bIm*i)
-                // ((aRe + aIm*i) * (bRe - bIm*i)) / ((bRe + bIm*i) * (bRe - bIm*i))
-                //  bRe*bRe - bIm*bIm*i*i
-                ComplexNumber upperFractionPart = Multiply(new ComplexNumber() { Real = inputNumber.Real, Imaginary = -inputNumber.Imaginary });
+                ComplexNumber upperFractionPart = Multiply(new ComplexNumber() { 
+                    Real = inputNumber.Real,
+                    Imaginary = inputNumber.Imaginary * -1 
+                });
+
                 double lowerFractionPart = (inputNumber.Real * inputNumber.Real) + (inputNumber.Imaginary * inputNumber.Imaginary);
 
                 return new ComplexNumber()
