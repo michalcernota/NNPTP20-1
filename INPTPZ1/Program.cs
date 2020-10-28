@@ -16,21 +16,20 @@ namespace INPTPZ1
 
         static void Main(string[] args)
         {
-            Size bitmapSize = new Size()
+            CommandLineHandler commandLineHandler = new CommandLineHandler();
+            CommandLineArguments commandLineArguments = commandLineHandler.ParseCommandLineArguments(args);
+            if (commandLineArguments == null)
             {
-                Width = int.Parse(args[0]),
-                Height = int.Parse(args[1])
-            };
+                // count of command line arguments is not equal to 5 or 6
+                return;
+            }
+
+            Size bitmapSize = commandLineArguments.BitmapSize;
+            AxisInfo xAxisInfo = commandLineArguments.XAxisInfo;
+            AxisInfo yAxisInfo = commandLineArguments.YAxisInfo;
+            string output = commandLineArguments.OutputFilePath;
 
             Bitmap bitmap = new Bitmap(bitmapSize.Width, bitmapSize.Height);
-            double xmin = double.Parse(args[2]);
-            double xmax = double.Parse(args[3]);
-            double ymin = double.Parse(args[4]);
-            double ymax = double.Parse(args[5]);
-            string output = args[6];
-
-            double xstep = (xmax - xmin) / bitmapSize.Width;
-            double ystep = (ymax - ymin) / bitmapSize.Height;
 
             List<ComplexNumber> roots = new List<ComplexNumber>();
             Poly poly = new Poly();
@@ -40,22 +39,22 @@ namespace INPTPZ1
             poly.Coefficients.Add(new ComplexNumber() { Real = 1 });
             Poly derivatedPoly = poly.Derivate();
 
-            Console.WriteLine(poly);
-            Console.WriteLine(derivatedPoly);
+            commandLineHandler.PrintToConsole(poly);
+            commandLineHandler.PrintToConsole(derivatedPoly);
 
-            var colors = new Color[]
+            Color[] colors = new Color[]
             {
                 Color.Red, Color.Blue, Color.Green, Color.Yellow, Color.Orange, Color.Fuchsia, Color.Gold, Color.Cyan, Color.Magenta
             };
 
             // for every pixel in image...
-            for (int i = 0; i < bitmapSize.Width; i++)
+            for (int i = 0; i < bitmap.Width; i++)
             {
-                for (int j = 0; j < bitmapSize.Height; j++)
+                for (int j = 0; j < bitmap.Height; j++)
                 {
                     // find "world" coordinates of pixel
-                    double y = ymin + i * ystep;
-                    double x = xmin + j * xstep;
+                    double y = yAxisInfo.Min + (i * yAxisInfo.Step);
+                    double x = xAxisInfo.Min + (j * xAxisInfo.Step);
 
                     ComplexNumber currentComplexNumber = new ComplexNumber()
                     {
@@ -86,7 +85,7 @@ namespace INPTPZ1
                 }
             }
 
-            bitmap.Save(output ?? "../../../out.png");
+            bitmap.Save(output);
         }
 
         private static void FindSolutionUsingNewtonsIteration(Poly poly, Poly derivedPoly, ref ComplexNumber currentComplexNumber, ref int iterationsCounter)

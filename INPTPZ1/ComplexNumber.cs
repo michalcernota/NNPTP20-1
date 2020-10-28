@@ -66,19 +66,20 @@
                 return $"({Real} + {Imaginary}i)";
             }
 
-            public ComplexNumber Divide(ComplexNumber inputNumber)
+            public ComplexNumber Divide(ComplexNumber denominator)
             {
-                ComplexNumber upperFractionPart = Multiply(new ComplexNumber() { 
-                    Real = inputNumber.Real,
-                    Imaginary = inputNumber.Imaginary * -1 
+                ComplexNumber resultOfNumeratorsMultiplication = Multiply(new ComplexNumber()
+                {
+                    Real = denominator.Real,
+                    Imaginary = denominator.Imaginary * -1 
                 });
 
-                double lowerFractionPart = (inputNumber.Real * inputNumber.Real) + (inputNumber.Imaginary * inputNumber.Imaginary);
+                double resultOfDenominatorsMultiplication = (denominator.Real * denominator.Real) + (denominator.Imaginary * denominator.Imaginary);
 
                 return new ComplexNumber()
                 {
-                    Real = upperFractionPart.Real / lowerFractionPart,
-                    Imaginary = upperFractionPart.Imaginary / lowerFractionPart
+                    Real = resultOfNumeratorsMultiplication.Real / resultOfDenominatorsMultiplication,
+                    Imaginary = resultOfNumeratorsMultiplication.Imaginary / resultOfDenominatorsMultiplication
                 };
             }
         }
