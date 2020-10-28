@@ -43,6 +43,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AxisInfo.cs" />
+    <Compile Include="BitmapHandler.cs" />
+    <Compile Include="CommandLineArguments.cs" />
+    <Compile Include="CommandLineHandler.cs" />
     <Compile Include="ComplexNumber.cs" />
     <Compile Include="Poly.cs" />
     <Compile Include="Program.cs" />

@@ -20,16 +20,13 @@ namespace INPTPZ1
             CommandLineArguments commandLineArguments = commandLineHandler.ParseCommandLineArguments(args);
             if (commandLineArguments == null)
             {
-                // count of command line arguments is not equal to 5 or 6
                 return;
             }
 
             Size bitmapSize = commandLineArguments.BitmapSize;
             AxisInfo xAxisInfo = commandLineArguments.XAxisInfo;
             AxisInfo yAxisInfo = commandLineArguments.YAxisInfo;
-            string output = commandLineArguments.OutputFilePath;
-
-            Bitmap bitmap = new Bitmap(bitmapSize.Width, bitmapSize.Height);
+            string outputFilePath = commandLineArguments.OutputFilePath;
 
             List<ComplexNumber> roots = new List<ComplexNumber>();
             Poly poly = new Poly();
@@ -42,24 +39,21 @@ namespace INPTPZ1
             commandLineHandler.PrintToConsole(poly);
             commandLineHandler.PrintToConsole(derivatedPoly);
 
-            Color[] colors = new Color[]
-            {
-                Color.Red, Color.Blue, Color.Green, Color.Yellow, Color.Orange, Color.Fuchsia, Color.Gold, Color.Cyan, Color.Magenta
-            };
+            BitmapHandler bitmapHandler = new BitmapHandler(bitmapSize.Width, bitmapSize.Height);
 
             // for every pixel in image...
-            for (int i = 0; i < bitmap.Width; i++)
+            for (int i = 0; i < bitmapSize.Width; i++)
             {
-                for (int j = 0; j < bitmap.Height; j++)
+                for (int j = 0; j < bitmapSize.Height; j++)
                 {
                     // find "world" coordinates of pixel
-                    double y = yAxisInfo.Min + (i * yAxisInfo.Step);
-                    double x = xAxisInfo.Min + (j * xAxisInfo.Step);
+                    double coordinationY = yAxisInfo.Min + (i * yAxisInfo.Step);
+                    double coordinationX = xAxisInfo.Min + (j * xAxisInfo.Step);
 
                     ComplexNumber currentComplexNumber = new ComplexNumber()
                     {
-                        Real = x,
-                        Imaginary = y
+                        Real = coordinationX,
+                        Imaginary = coordinationY
                     };
 
                     if (currentComplexNumber.Real == 0)
@@ -80,12 +74,12 @@ namespace INPTPZ1
                     int id = GetRoot(roots, currentComplexNumber);
 
                     // colorize pixel according to root number
-                    Color pixelColor = GetPixelColor(colors, iterationsCounter, id);
-                    bitmap.SetPixel(j, i, pixelColor);
+                    Color pixelColor = bitmapHandler.GetColorForPixel(id, iterationsCounter);
+                    bitmapHandler.ColorizePixel(i, j, pixelColor);
                 }
             }
 
-            bitmap.Save(output);
+            bitmapHandler.SaveBitmap(outputFilePath);
         }
 
         private static void FindSolutionUsingNewtonsIteration(Poly poly, Poly derivedPoly, ref ComplexNumber currentComplexNumber, ref int iterationsCounter)
@@ -122,16 +116,6 @@ namespace INPTPZ1
             }
 
             return id;
-        }
-
-        private static Color GetPixelColor(Color[] colorsCollection, int iterationsCounter, int id)
-        {
-            Color pixelColor = colorsCollection[id % colorsCollection.Length];
-            pixelColor = Color.FromArgb(
-                Math.Min(Math.Max(0, pixelColor.R - iterationsCounter * 2), 255),
-                Math.Min(Math.Max(0, pixelColor.G - iterationsCounter * 2), 255),
-                Math.Min(Math.Max(0, pixelColor.B - iterationsCounter * 2), 255));
-            return pixelColor;
         }
     }
 }
