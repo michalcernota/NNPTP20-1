@@ -9,9 +9,9 @@ namespace INPTPZ1
 
         public CommandLineArguments ParseCommandLineArguments(string[] commandLineArguments)
         {
-            if (commandLineArguments.Length < 5 || commandLineArguments.Length > 6)
+            if (commandLineArguments.Length < 6 || commandLineArguments.Length > 7)
             {
-                Console.WriteLine("Count of command line arguments must me 5 or 6.");
+                Console.WriteLine("Count of command line arguments must me 6 or 7.");
                 return null;
             }
 
@@ -27,8 +27,8 @@ namespace INPTPZ1
             AxisInfo yAxisInfo = new AxisInfo(double.Parse(commandLineArguments[4]), double.Parse(commandLineArguments[5]));
             yAxisInfo.CalculateStep(bitmapSize.Height);
 
-            string outputFilePath = null;
-            if (commandLineArguments.Length == 6)
+            string outputFilePath = DefaultOutputFilePath;
+            if (commandLineArguments.Length == 7)
             {
                 outputFilePath = commandLineArguments[6];
             }
